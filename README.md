@@ -1,99 +1,111 @@
 <div align="center">
 
-# 🔐 Password Generator & Manager
+# 🔐 Password Generator & Manager 🔐 (v1.02)
 
 **Built for people who take their privacy seriously.**
 
-![Version](https://img.shields.io/badge/version-1.0.0-7c3aed)
-![License](https://img.shields.io/badge/license-MIT-a78bfa)
-![Security](https://img.shields.io/badge/encryption-AES--256--GCM-4ade80)
-![Platform](https://img.shields.io/badge/platform-browser-60a5fa)
+### **Private. Lightweight. Bank-Grade Security.**
+
+![Version](https://img.shields.io/badge/version-1.0.2-ff8c00)
+![License](https://img.shields.io/badge/license-MIT-white)
+![Security](https://img.shields.io/badge/encryption-AES--256--GCM-00ffff)
+![Platform](https://img.shields.io/badge/platform-browser-orange)
+
+Built for people who take their privacy seriously. No servers, no accounts, just pure client-side encryption. 
 
 </div>
 
-### Tech Stack
-- **PBKDF2**: Key stretching with 310,000 iterations.
-- **AES-256-GCM**: Military-grade encryption.
-- **Vanilla JS**: No frameworks, no dependencies.
+---
+
+## 🛠 Tech Stack & Security Specs
+
+* **PBKDF2**: Key stretching with **310,000 iterations** of SHA-256 to prevent brute-force attacks.
+* **AES-256-GCM**: Military-grade authenticated encryption for data confidentiality and integrity.
+* **Vanilla JS**: Modular architecture with zero frameworks and zero dependencies.
+* **Web Crypto API**: Utilizing native browser cryptographic primitives for maximum security.
 
 ---
 
-## 🔐 Password Generator & Manager
-### *Private. Lightweight. Bank-Grade Security.*
+## 🧠 Why I Built This
 
-Built for people who take their privacy seriously. No servers, no accounts, just pure encryption.
+Most password managers are either bloated cloud-based subscriptions or simple tools that store data in plain text. I wanted something in between: **lightweight, portable, and truly private.**
 
----
-
-## 🛠 Why I Built This
-Most password managers are either bloated apps that require a subscription and an account, or simple tools that store your passwords in plain text. I wanted something in between **lightweight, private, and actually secure.**
-
-This tool runs **entirely in your browser.** Nothing is ever sent to a server. No account is needed. No tracking scripts. You own your data.
+This tool runs **entirely in your browser**. Nothing is ever sent to a server. You own your keys; you own your data.
 
 ---
 
-## 🧠 How It Works
-The security of this application relies on the **Web Crypto API**, ensuring that your Master Password is the only way to access your data.
+## 🛡️ The Master Key & Security Architecture
 
-1.  **The Master Password:** When you open the app, you set a master password. This is used to derive a high-entropy encryption key.
-2.  **Encryption:** We use **AES-256-GCM**, the same encryption standard trusted by banks and governments worldwide. 
-3.  **Brute-Force Protection:** Every saved password gets its own unique key derived using **PBKDF2 with 310,000 rounds of SHA-256**. This makes traditional brute-force attacks practically impossible on modern hardware.
-4.  **Zero Persistence:** The master password itself is never stored—not in `localStorage`, and not even in memory once the tab is closed.
+The "Root of Trust" in this application is your **Master Security Key**. It is designed with a **Zero-Knowledge Architecture**:
+
+* **Key Derivation (PBKDF2)**: Your Master Key is never used directly. It is stretched using **310,000 iterations** of SHA-256. This makes GPU-based brute-force attacks mathematically unfeasible.
+* **Zero Persistence**: The Master Key is **never stored** not in `localStorage`, cookies, or logs. It exists only in volatile RAM and is destroyed the moment the tab is closed.
+* **AES-256-GCM Encryption**: It uses authenticated encryption to ensure that your data cannot be tampered with. Each entry uses a unique, cryptographically secure **Salt** and **IV**.
+* **⚠️ The Recovery Warning**: Because there are no backdoors, if you lose your Master Key, the data in your `vault.json` becomes permanent digital noise. **There is no "Forgot Password" link.**
 
 ---
 
 ## ✨ Features
 
-### **Password Generator**
-* **Custom Length:** Generate keys anywhere from **6 to 64 characters**.
-* **Granular Control:** Toggle uppercase, lowercase, numbers, and symbols.
-* **True Randomness:** Uses `crypto.getRandomValues()` for cryptographic-grade entropy never `Math.random()`.
-* **One-Click Copy:** Quickly move your generated password to your clipboard.
+### **Smart Password Generator**
+* **Cryptographic Entropy**: Uses `crypto.getRandomValues()` instead of `Math.random()`.
+* **Granular Control**: Toggle Uppercase, Lowercase, Numbers, and Symbols.
+* **Custom Length**: Support for high-entropy keys from 6 to 64 characters.
 
-### **Password Vault**
-* **Local Storage:** Save unlimited entries encrypted locally in your browser.
-* **Privacy First:** Each entry shows only a **SHA-256 fingerprint**. The actual password stays hidden.
-* **Timed Reveal:** Clicking "Reveal" decrypts and shows the password for **5 seconds** before it automatically hides itself.
-* **Easy Management:** Delete any entry whenever you want.
+### **Encrypted Local Vault**
+* **Zero-Knowledge Architecture**: Your Master Key is never stored on the device or in memory.
+* **Timed Reveal**: Decrypted passwords are shown for only **5 seconds** before auto-hiding.
+* **Visual Fingerprinting**: Each entry is represented by its encrypted ciphertext hash for identification.
 
-### **Backup & Restore**
-* **Full Portability:** Export your entire vault as an encrypted JSON file.
-* **Cross-Device:** Import your JSON backup on any browser or device to restore your access.
-* **Safety Net:** Since data lives in `localStorage`, we recommend exporting after every important change.
+### **Backup & Portability**
+* **Encrypted JSON Export**: Take your data with you in a secure, portable format.
+* **Seamless Restore**: Import your backup file on any device to instantly regain access.
 
 ---
 
-## 🚀 Getting Started
-There is no installation. No setup. Just clone and open.
+## 📂 Project Structure
 
-```bash
-git clone [https://github.com/zfln-rehan0520/password-generator-manager.git](https://github.com/zfln-rehan0520/password-generator-manager.git)
+To maintain a professional Model-View-Controller (MVC) approach, the project is split into functional modules:
 
-Open index.html in Chrome, Firefox, or Edge. That’s it.
-📂 Project Structure
-
+```text
 password-generator-manager/
 ├── index.html        # Minimal UI skeleton
-├── style.css         # Handcrafted notebook-style design
-├── app.js            # Main UI rendering and event logic
-├── crypto.js         # Encryption, PBKDF2, and generation logic
-├── storage.js        # LocalStorage abstraction layer
+├── style.css         # Custom Dark-Mode UI (Orange & Cyan Theme)
+├── crypto.js         # Encryption Engine (AES-GCM & PBKDF2 logic)
+├── storage.js        # LocalStorage Abstraction Layer
+├── app.js            # Main UI Rendering & Event Controller
 ├── assets/           # Icons and SVG assets
-├── images/           # Project screenshots
-├── docs/             # Technical specifications & notes
-├── LICENSE           # MIT License
-└── README.md         # You are here
+└── image/            # Project screenshots
+```
+| Layer | Technology |
+|:------|:-----------|
+| 🔑 Generation | `crypto.getRandomValues()` |
+| 🔐 Key Derivation | `PBKDF2 (310,000 rounds)` |
+| 🛡️ Encryption | `AES-256-GCM` |
+| 💾 Storage | Browser `localStorage` (Device-Only) |
+| 🎲 Salt/IV | Unique random 16-byte Salt + 12-byte IV per entry |
 
-Layer,Technology
-Generation,crypto.getRandomValues()
-Fingerprinting,SHA-256
-Key Derivation,"PBKDF2 (310,000 rounds)"
-Encryption,AES-256-GCM
-Salt/IV,Unique random Salt + IV per entry
 
-Layer,Technology
-Generation,crypto.getRandomValues()
-Fingerprinting,SHA-256
-Key Derivation,"PBKDF2 (310,000 rounds)"
-Encryption,AES-256-GCM
-Salt/IV,Unique random Salt + IV per entry
+## 🚀 Getting Started
+
+### 1. Clone the Repo
+First, clone the repository to your local machine using the terminal:
+```bash
+git clone [https://github.com/zfln-rehan0520/password-generator-manager.git](https://github.com/zfln-rehan0520/password-generator-manager.git)
+```
+Run Locally
+You can run this application without any complex setup:
+
+Locate the index.html file in the project folder.
+
+Open it with any modern browser (Brave, Chrome, Firefox, or Edge).
+
+Security Recommendation
+For the best experience and to ensure all Web Crypto API features function correctly, it is recommended to:
+
+Use a local development server (like the VS Code Live Server extension).
+
+Host the project on GitHub Pages to ensure it runs over a secure HTTPS connection.
+
+---
+**made by Mohammed Rehan | github: [zfln-rehan0520] (https://github.com/zfln-rehan0520)*
