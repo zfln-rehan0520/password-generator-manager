@@ -1,44 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecurePass | LYBERNET</title>
-    <link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Password Generator & Manager</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>🔐 Password Manager</h1>
-        <div class="display-container">
-            <input type="text" id="password-display" readonly placeholder="P@ssw0rd123!">
-            <button id="copy-btn">Copy</button>
-        </div>
+  <div class="container">
+    <h1>🔐 Password Generator & Manager</h1>
 
-        <div class="controls">
-            <label>Length: <span id="length-val">16</span></label>
-            <input type="range" id="length-slider" min="8" max="50" value="16">
-            
-            <div class="checkboxes">
-                <label><input type="checkbox" id="include-symbols" checked> Symbols</label>
-                <label><input type="checkbox" id="include-numbers" checked> Numbers</label>
-            </div>
-        </div>
+    <!-- Generator Section -->
+    <section id="generator">
+      <h2>Generate Password</h2>
+      <div class="options">
+        <label><input type="checkbox" id="uppercase" checked> Uppercase</label>
+        <label><input type="checkbox" id="lowercase" checked> Lowercase</label>
+        <label><input type="checkbox" id="numbers" checked> Numbers</label>
+        <label><input type="checkbox" id="symbols"> Symbols</label>
+      </div>
+      <label>Length: <input type="number" id="length" value="12" min="6" max="64"/></label>
+      <button id="generateBtn">Generate</button>
+      <div class="result">
+        <input type="text" id="generatedPassword" readonly />
+        <button id="copyBtn">Copy</button>
+      </div>
+      <button id="saveBtn">Save Password</button>
+    </section>
 
-        <button id="generate-btn" class="main-btn">Generate Secure Password</button>
+    <!-- Manager Section -->
+    <section id="manager">
+      <h2>Saved Passwords</h2>
+      <ul id="passwordList"></ul>
+    </section>
+  </div>
 
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
-        
-        <h3>Stored Vault</h3>
-        <ul id="password-list" style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto;">
-            </ul>
-
-        <button id="clear-btn" style="width: 100%; background: #ef4444; color: white; border: none; padding: 8px; margin-top: 10px; cursor: pointer;">
-            Clear Vault
-        </button>
-
-        <p style="text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 15px;">
-            &copy; 2026 LYBERNET Security Labs
-        </p>
-    </div> <script src="assets/script.js"></script>
+  <script src="crypto.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
