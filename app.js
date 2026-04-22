@@ -1,120 +1,79 @@
-// app.js — UI logic with master password support
+const UI = {
+    render() {
+        const root = document.getElementById('app');
+        root.innerHTML = `
+            <h1>🔐 VAULT v1.0</h1>
+            <input type="password" id="master-input" placeholder="Enter Master Password">
+            
+            <div class="tool-box">
+                <h3>Generator</h3>
+                <input type="text" id="label-input" placeholder="Service Name (e.g. Github)">
+                <button id="gen-btn">Generate & Save</button>
+            </div>
 
-let masterPassword = null;
+            <div id="vault-display"></div>
+            <button id="export-btn" style="margin-top:20px; background:#444; color:white;">Backup Vault (JSON)</button>
+        `;
+        this.bindEvents();
+        this.refreshVault();
+    },
 
-// Ask for master password on load
-window.addEventListener('load', () => {
-  masterPassword = prompt('🔐 Enter your Master Password to unlock your vault:');
-  if (!masterPassword) {
-    alert('No master password entered. Saved passwords cannot be loaded.');
-  }
-  renderList();
-});
+    async handleSave() {
+        const master = document.getElementById('master-input').value;
+        const label = document.getElementById('label-input').value;
+        if (!master || !label) return alert("Need Master Password and Label!");
 
-// Generate
-document.getElementById('generateBtn').addEventListener('click', () => {
-  const length     = parseInt(document.getElementById('length').value);
-  const useUpper   = document.getElementById('uppercase').checked;
-  const useLower   = document.getElementById('lowercase').checked;
-  const useNumbers = document.getElementById('numbers').checked;
-  const useSymbols = document.getElementById('symbols').checked;
+        const rawPass = CryptoEngine.generateRaw(16, { numbers: true, symbols: true });
+        const encrypted = await CryptoEngine.encrypt(rawPass, master);
+        
+        VaultStorage.add({ label, ...encrypted, id: Date.now() });
+        this.refreshVault();
+    },
 
-  const password = generatePassword(length, useUpper, useLower, useNumbers, useSymbols);
-  document.getElementById('generatedPassword').value = password;
-});
+    refreshVault() {
+        const list = document.getElementById('vault-display');
+        const data = VaultStorage.get();
+        list.innerHTML = '<h3>Saved Keys</h3>';
+        
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'vault-card';
+            div.innerHTML = `
+                <strong>${item.label}</strong><br>
+                <small>Fingerprint: ${item.ct.substring(0, 10)}...</small>
+                <button onclick="UI.reveal('${item.id}')">Reveal</button>
+                <div id="p-${item.id}" class="hidden" style="color:var(--accent); margin-top:5px;"></div>
+            `;
+            list.appendChild(div);
+        });
+    },
 
-// Copy
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const pwd = document.getElementById('generatedPassword').value;
-  if (!pwd) return alert('Generate a password first!');
-  navigator.clipboard.writeText(pwd).then(() => alert('✅ Copied!'));
-});
+    async reveal(id) {
+        const master = document.getElementById('master-input').value;
+        if(!master) return alert("Enter Master Pass first!");
+        
+        const entry = VaultStorage.get().find(e => e.id == id);
+        const pass = await CryptoEngine.decrypt(entry, master);
+        
+        const display = document.getElementById(`p-${id}`);
+        display.innerText = pass;
+        display.classList.remove('hidden');
+        
+        setTimeout(() => display.classList.add('hidden'), 5000);
+    },
 
-// Save (encrypted)
-document.getElementById('saveBtn').addEventListener('click', async () => {
-  const pwd = document.getElementById('generatedPassword').value;
-  if (!pwd) return alert('Nothing to save!');
-  if (!masterPassword) return alert('No master password set!');
-  await savePassword(pwd, masterPassword);
-  renderList();
-});
-
-// Render saved passwords (shows fingerprint only, decrypt on demand)
-function renderList() {
-  const list = document.getElementById('passwordList');
-  const passwords = getPasswords();
-  list.innerHTML = '';
-
-  passwords.forEach((entry, index) => {
-    const li = document.createElement('li');
-
-    const span = document.createElement('span');
-    span.textContent = `🔒 Fingerprint: ${entry.fingerprint}`;
-
-    const revealBtn = document.createElement('button');
-    revealBtn.textContent = '👁 Reveal';
-    revealBtn.style.marginRight = '8px';
-    revealBtn.addEventListener('click', async () => {
-      const decrypted = await decryptEntry(index, masterPassword);
-      if (decrypted) {
-        span.textContent = `🔓 ${decrypted}`;
-        setTimeout(() => { span.textContent = `🔒 Fingerprint: ${entry.fingerprint}`; }, 5000);
-      } else {
-        alert('❌ Wrong master password or corrupted data!');
-      }
-    });
-
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '🗑 Delete';
-    delBtn.addEventListener('click', () => {
-      deletePassword(index);
-      renderList();
-    });
-
-    li.appendChild(span);
-    li.appendChild(revealBtn);
-    li.appendChild(delBtn);
-    list.appendChild(li);
-  });
-}
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const passwords = getPasswords();
-  if (passwords.length === 0) return alert('No saved passwords to export!');
-
-  const blob = new Blob([JSON.stringify(passwords, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'password-vault-backup.json';
-  a.click();
-
-  URL.revokeObjectURL(url);
-  alert('✅ Vault exported! Keep this file safe.');
-});
-document.getElementById('importBtn').addEventListener('click', () => {
-  document.getElementById('importFile').click();
-});
-
-document.getElementById('importFile').addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const imported = JSON.parse(e.target.result);
-      if (!Array.isArray(imported)) {
-        return alert('❌ Invalid vault file!');
-      }
-      const existing = getPasswords();
-      const merged = [...existing, ...imported];
-      localStorage.setItem('saved_passwords', JSON.stringify(merged));
-      alert(`✅ ${imported.length} passwords imported successfully!`);
-      renderList();
-    } catch (err) {
-      alert('❌ Failed to read file. Make sure it is a valid vault backup.');
+    bindEvents() {
+        document.getElementById('gen-btn').onclick = () => this.handleSave();
+        document.getElementById('export-btn').onclick = () => {
+            const data = localStorage.getItem(VaultStorage.KEY);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vault_backup.json';
+            a.click();
+        };
     }
-  };
-  reader.readAsText(file);
-});
+};
+
+UI.render();
