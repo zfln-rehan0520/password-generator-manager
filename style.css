@@ -1,7 +1,7 @@
 :root { 
     --bg: #0d1117; 
     --paper: #161b22; 
-    --accent: #00ff41; 
+   --accent: #ff8c00;
     --text: #c9d1d9; 
     --border: #30363d;
 }
@@ -122,7 +122,7 @@ button:hover {
     position: absolute; 
     top: 12px; 
     right: 12px; 
-    color: #ff4444; 
+    color: #00ffff; 
     cursor: pointer; 
     background: none; 
     border: none;
