@@ -92,3 +92,29 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   URL.revokeObjectURL(url);
   alert('✅ Vault exported! Keep this file safe.');
 });
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) {
+        return alert('❌ Invalid vault file!');
+      }
+      const existing = getPasswords();
+      const merged = [...existing, ...imported];
+      localStorage.setItem('saved_passwords', JSON.stringify(merged));
+      alert(`✅ ${imported.length} passwords imported successfully!`);
+      renderList();
+    } catch (err) {
+      alert('❌ Failed to read file. Make sure it is a valid vault backup.');
+    }
+  };
+  reader.readAsText(file);
+});
