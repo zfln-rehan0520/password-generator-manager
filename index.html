@@ -39,8 +39,8 @@
             text-align: center;
             border-bottom: 1px solid var(--border); 
             padding-bottom: 20px; 
-            font-size: 1.5rem; 
-            letter-spacing: 2px; 
+            font-size: 1.2rem; 
+            letter-spacing: 1px; 
             margin-top: 0;
             color: #fff;
         }
@@ -73,7 +73,6 @@
             box-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
         }
 
-        /* Fixed Alignment for Checkboxes */
         .options-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -87,7 +86,7 @@
 
         .option-item {
             display: flex;
-            align-items: center; /* Perfect vertical alignment */
+            align-items: center; 
             gap: 10px;
             cursor: pointer;
             font-size: 0.85rem;
@@ -102,8 +101,6 @@
             accent-color: var(--accent);
         }
 
-        .option-item:hover { color: #fff; }
-
         button { 
             background: var(--accent); 
             color: black; 
@@ -112,13 +109,11 @@
             border: none; 
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-top: 5px;
         }
 
         button:hover { 
             background: #39ff14; 
             transform: translateY(-2px); 
-            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
         }
 
         .vault-card { 
@@ -128,10 +123,7 @@
             margin-top: 15px; 
             border: 1px solid var(--border);
             position: relative; 
-            transition: 0.2s;
         }
-
-        .vault-card:hover { border-color: var(--accent); }
 
         .delete-btn { 
             position: absolute; 
@@ -141,13 +133,27 @@
             cursor: pointer; 
             background: none; 
             border: none;
-            width: auto; 
-            padding: 0;
             font-size: 0.8rem;
         }
 
+        /* NEW: Import Zone Styling */
+        .import-zone {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8b949e;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .import-zone:hover {
+            border-color: var(--accent);
+            color: #fff;
+        }
+
         .hidden { display: none; }
-        
         .entry-label { font-weight: bold; color: #fff; display: block; margin-bottom: 10px; }
     </style>
 </head>
@@ -214,7 +220,7 @@ const VaultStorage = {
 const UI = {
     render() {
         document.getElementById('app').innerHTML = `
-            <h1>🔐 Password Generator & Manager (v1.0)</h1>
+            <h1>🔐 Password Vault (v1.1)</h1>
             
             <label>Master Security Key</label>
             <input type="password" id="m-pass" placeholder="••••••••">
@@ -227,49 +233,76 @@ const UI = {
             </div>
             
             <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                <span style="font-size:0.8rem; opacity:0.6; white-space:nowrap;">Length:</span>
+                <span style="font-size:0.8rem; opacity:0.6;">Length:</span>
                 <input type="number" id="p-len" value="16" min="6" max="64" style="margin:0; width: 80px;">
             </div>
 
             <label>Service Name</label>
             <input type="text" id="l-in" placeholder="e.g. GitHub">
             
-            <button onclick="UI.handleSave()">Generate & Encrypt</button>
+            <button onclick="UI.handleSave()">Generate & Save</button>
             
             <div id="v-list"></div>
             
-            <button onclick="UI.export()" style="background:transparent; border:1px solid var(--border); color:#8b949e; margin-top:30px; font-size:0.75rem;">
-                Backup Vault (Encrypted JSON)
-            </button>
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button onclick="UI.export()" style="background:transparent; border:1px solid var(--border); color:#8b949e; font-size:0.7rem;">
+                    Backup (.json)
+                </button>
+                <button onclick="document.getElementById('file-input').click()" style="background:transparent; border:1px solid var(--border); color:#8b949e; font-size:0.7rem;">
+                    Restore (.json)
+                </button>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept=".json" onchange="UI.handleImport(event)">
+            
+            <p style="font-size: 0.6rem; text-align: center; opacity: 0.4; margin-top: 20px;">
+                Note: Losing your Master Key means losing access to your data forever.
+            </p>
         `;
         this.refresh();
     },
+
     async handleSave() {
         const m = document.getElementById('m-pass').value;
         const l = document.getElementById('l-in').value;
         const len = parseInt(document.getElementById('p-len').value);
-        const opt = { 
-            u: document.getElementById('c-u').checked, 
-            l: document.getElementById('c-l').checked, 
-            n: document.getElementById('c-n').checked, 
-            s: document.getElementById('c-s').checked 
-        };
+        const opt = { u: document.getElementById('c-u').checked, l: document.getElementById('c-l').checked, n: document.getElementById('c-n').checked, s: document.getElementById('c-s').checked };
         
         if(!m || !l) return alert("Fill Master Password and Service Name!");
-        if(!opt.u && !opt.l && !opt.n && !opt.s) return alert("Select at least one character type!");
-        
         const raw = CryptoEngine.generateRaw(len, opt);
         const enc = await CryptoEngine.encrypt(raw, m);
         VaultStorage.add({ label: l.toUpperCase(), ...enc, id: Date.now() });
-        
         document.getElementById('l-in').value = '';
         this.refresh();
     },
+
+    async handleImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (Array.isArray(data) && data.length > 0 && data[0].ct) {
+                    if (confirm(`Import ${data.length} entries? This will replace your current local vault.`)) {
+                        VaultStorage.save(data);
+                        this.refresh();
+                        alert("Vault Restored! Use your Master Key to reveal entries.");
+                    }
+                } else {
+                    alert("Invalid backup file format.");
+                }
+            } catch (err) {
+                alert("Error reading file.");
+            }
+        };
+        reader.readAsText(file);
+    },
+
     refresh() {
         const list = document.getElementById('v-list');
         const data = VaultStorage.get();
-        list.innerHTML = '<h3 style="font-size:0.8rem; margin-top:25px; opacity:0.5; text-align:center;">ENCRYPTED DATABASE</h3>';
-        
+        list.innerHTML = '<h3 style="font-size:0.7rem; margin-top:25px; opacity:0.5; text-align:center;">VAULT ENTRIES</h3>';
         data.forEach(item => {
             const div = document.createElement('div');
             div.className = 'vault-card';
@@ -278,33 +311,30 @@ const UI = {
                 <button class="delete-btn" onclick="UI.del('${item.id}')">✕</button>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <button onclick="UI.reveal('${item.id}')" style="width:auto; padding:6px 12px; margin:0; font-size:0.7rem;">Reveal</button>
-                    <span id="p-${item.id}" style="color:var(--accent); font-weight:bold; letter-spacing:1px; font-family:monospace;"></span>
+                    <span id="p-${item.id}" style="color:var(--accent); font-weight:bold; font-family:monospace;"></span>
                 </div>
             `;
             list.appendChild(div);
         });
     },
+
     async reveal(id) {
         const m = document.getElementById('m-pass').value;
-        if(!m) return alert("Enter Master Key to Decrypt!");
-        
+        if(!m) return alert("Enter Master Key!");
         const entry = VaultStorage.get().find(e => e.id == id);
         const pass = await CryptoEngine.decrypt(entry, m);
-        
         const span = document.getElementById(`p-${id}`);
         span.innerText = pass;
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            span.innerText = '';
-        }, 5000);
+        setTimeout(() => { span.innerText = ''; }, 5000);
     },
+
     del(id) {
-        if(confirm("Permanently delete this encrypted entry?")) {
+        if(confirm("Delete this entry permanently?")) {
             VaultStorage.delete(id);
             this.refresh();
         }
     },
+
     export() {
         const data = localStorage.getItem(VaultStorage.KEY);
         const blob = new Blob([data], {type: 'application/json'});
