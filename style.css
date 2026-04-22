@@ -66,4 +66,11 @@ button:hover { background: #6d28d9; }
   margin-bottom: 16px;
   width: 100%;
 }
-#exportBtn:hover { background: #047857; }
+#exportBtn:hover { background: #047857; }#passwordList li button:hover { background: #b91c1c; }    ← this is already in your file
+
+#exportBtn {                                               ← paste from here
+  background: #059669;
+  margin-bottom: 16px;
+  width: 100%;
+}
+#exportBtn:hover { background: #047857; }                 ← to here
