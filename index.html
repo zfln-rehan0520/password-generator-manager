@@ -287,3 +287,39 @@
 <body>
   <div class="container">
     <h1>🔐 Password <span>Generator</span> & Manager</h1>
+    <p class="subtitle">// stored locally. encrypted. yours only.</p>
+
+    <section id="generator">
+      <h2>Generate Password</h2>
+      <div class="options">
+        <label><input type="checkbox" id="uppercase" checked> Uppercase</label>
+        <label><input type="checkbox" id="lowercase" checked> Lowercase</label>
+        <label><input type="checkbox" id="numbers" checked> Numbers</label>
+        <label><input type="checkbox" id="symbols"> Symbols</label>
+      </div>
+      <div class="length-row">
+        <span>Length</span>
+        <input type="number" id="length" value="12" min="6" max="64"/>
+      </div>
+      <button id="generateBtn">Generate</button>
+      <div class="result">
+        <input type="text" id="generatedPassword" readonly />
+        <button id="copyBtn">Copy</button>
+      </div>
+      <button id="saveBtn">Save Password</button>
+    </section>
+
+    <section id="manager">
+      <h2>Saved Passwords</h2>
+      <button id="exportBtn">⬇️ Export Vault</button>
+      <button id="importBtn">⬆️ Import Vault</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+      <ul id="passwordList"></ul>
+    </section>
+  </div>
+
+  <script src="crypto.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
