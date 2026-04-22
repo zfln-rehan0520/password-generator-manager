@@ -77,3 +77,18 @@ function renderList() {
     list.appendChild(li);
   });
 }
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const passwords = getPasswords();
+  if (passwords.length === 0) return alert('No saved passwords to export!');
+
+  const blob = new Blob([JSON.stringify(passwords, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'password-vault-backup.json';
+  a.click();
+
+  URL.revokeObjectURL(url);
+  alert('✅ Vault exported! Keep this file safe.');
+});
