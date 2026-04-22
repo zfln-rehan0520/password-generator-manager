@@ -1,57 +1,21 @@
-:root {
-    --bg: #121212;
-    --paper: #1e1e1e;
-    --accent: #00ff41; /* Matrix/Cyber Green */
-    --text: #e0e0e0;
-    --border: #333;
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+    font-size: 0.8rem;
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 4px;
 }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Courier New', Courier, monospace; /* Human/Dev feel */
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+.range-box {
+    margin: 10px 0;
+    font-size: 0.9rem;
 }
 
-#app {
-    width: 100%;
-    max-width: 500px;
-    background: var(--paper);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 10px 10px 0px #000;
-    border: 1px solid var(--border);
-}
-
-h1 { border-bottom: 2px solid var(--accent); padding-bottom: 10px; font-size: 1.5rem; }
-
-input, button {
-    background: #252525;
-    border: 1px solid var(--border);
-    color: white;
-    padding: 12px;
-    margin: 5px 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-button {
-    background: var(--accent);
-    color: black;
-    font-weight: bold;
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
     cursor: pointer;
-    transition: 0.2s;
 }
-
-button:hover { filter: brightness(1.2); transform: translateY(-2px); }
-
-.vault-card {
-    background: #252525;
-    margin-top: 15px;
-    padding: 15px;
-    border-left: 4px solid var(--accent);
-}
-
-.hidden { display: none; }
