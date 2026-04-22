@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700&display=swap');
-
 :root {
   --bg: #f5f0e8;
   --surface: #fffdf7;
@@ -20,7 +18,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: Georgia, 'Times New Roman', serif;
   background-color: var(--bg);
   background-image:
     repeating-linear-gradient(
@@ -48,7 +46,6 @@ body {
   position: relative;
 }
 
-/* red margin line like a notebook */
 .container::before {
   content: '';
   position: absolute;
@@ -61,7 +58,7 @@ body {
 }
 
 h1 {
-  font-family: 'Instrument Serif', serif;
+  font-family: Georgia, serif;
   font-size: 2rem;
   color: var(--ink);
   text-align: center;
@@ -79,11 +76,11 @@ h1 span {
   font-size: 0.82rem;
   color: var(--ink-light);
   margin-bottom: 32px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Courier New', monospace;
 }
 
 h2 {
-  font-family: 'Instrument Serif', serif;
+  font-family: Georgia, serif;
   font-size: 1.2rem;
   color: var(--ink);
   margin-bottom: 16px;
@@ -95,7 +92,6 @@ section {
   margin-bottom: 36px;
 }
 
-/* Checkboxes */
 .options {
   display: flex;
   flex-wrap: wrap;
@@ -116,6 +112,7 @@ section {
   border-radius: 2px;
   transition: all 0.15s;
   font-weight: 600;
+  font-family: Arial, sans-serif;
 }
 
 .options label:hover {
@@ -129,7 +126,6 @@ input[type="checkbox"] {
   height: 14px;
 }
 
-/* Length input */
 .length-row {
   display: flex;
   align-items: center;
@@ -137,6 +133,7 @@ input[type="checkbox"] {
   margin-bottom: 18px;
   font-size: 0.9rem;
   font-weight: 600;
+  font-family: Arial, sans-serif;
 }
 
 input[type="number"] {
@@ -146,7 +143,7 @@ input[type="number"] {
   border-radius: 2px;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Courier New', monospace;
   font-size: 0.95rem;
   outline: none;
   transition: border 0.2s;
@@ -156,9 +153,8 @@ input[type="number"]:focus {
   border-color: var(--accent);
 }
 
-/* Buttons */
 button {
-  font-family: 'Nunito', sans-serif;
+  font-family: Arial, sans-serif;
   font-weight: 700;
   font-size: 0.88rem;
   border: 2px solid var(--ink);
@@ -191,7 +187,6 @@ button {
   box-shadow: 2px 2px 0px #c0b49a;
 }
 
-/* Result row */
 .result {
   display: flex;
   gap: 8px;
@@ -205,7 +200,7 @@ button {
   border-radius: 2px;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   outline: none;
 }
@@ -238,7 +233,6 @@ button {
   box-shadow: 5px 5px 0px #c0b49a;
 }
 
-/* Vault buttons */
 #exportBtn {
   background: var(--surface);
   color: var(--ink);
@@ -270,7 +264,6 @@ button {
   box-shadow: 5px 5px 0px #c0b49a;
 }
 
-/* Password list */
 #passwordList {
   list-style: none;
   display: flex;
@@ -286,7 +279,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'Courier New', monospace;
   font-size: 0.85rem;
   color: var(--ink);
   gap: 8px;
@@ -306,9 +299,7 @@ button {
   box-shadow: 2px 2px 0px var(--border);
 }
 
-#passwordList li .reveal-btn:hover {
-  background: var(--bg);
-}
+#passwordList li .reveal-btn:hover { background: var(--bg); }
 
 #passwordList li .delete-btn {
   background: var(--red);
@@ -319,21 +310,16 @@ button {
   box-shadow: 2px 2px 0px #a93226;
 }
 
-#passwordList li .delete-btn:hover {
-  background: var(--red-hover);
-}
+#passwordList li .delete-btn:hover { background: var(--red-hover); }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   color: var(--ink-light);
   font-size: 0.85rem;
   font-style: italic;
   padding: 20px 0;
-  font-family: 'Instrument Serif', serif;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
