@@ -91,7 +91,7 @@ ZeroCrypt/
 ### 1. Clone the Repo
 First, clone the repository to your local machine using the terminal:
 ```bash
-git clone [https://github.com/zfln-rehan0520/password-generator-manager.git](https://github.com/zfln-rehan0520/password-generator-manager.git)
+git clone [ https://github.com/zfln-rehan0520/ZeroCrypt ]
 ```
 Run Locally
 You can run this application without any complex setup:
