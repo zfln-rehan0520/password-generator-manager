@@ -1,46 +1,46 @@
 const UI = {
-   render() {
-    document.getElementById('app').innerHTML = `
-        <h1>🔐 ZeroCrypt 🔐 (v1.02)</h1>
-        
-        <p class="highlight-credit">
-            Designed by MOHAMMED REHAN | @zfln-rehan0520
-        </p>
-        
-        <label>Master Security Key</label>
-        <input type="password" id="m-pass" placeholder="••••••••">
-        
-        <div class="options-grid">
-            <label class="option-item"><input type="checkbox" id="c-u" checked> Uppercase</label>
-            <label class="option-item"><input type="checkbox" id="c-l" checked> Lowercase</label>
-            <label class="option-item"><input type="checkbox" id="c-n" checked> Numbers</label>
-            <label class="option-item"><input type="checkbox" id="c-s" checked> Symbols</label>
-        </div>
-        
-        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-            <span style="font-size:0.8rem; opacity:0.6;">Length:</span>
-            <input type="number" id="p-len" value="16" min="6" max="64" style="margin:0; width: 80px;">
-        </div>
+    render() {
+        document.getElementById('app').innerHTML = `
+            <h1>🔐 ZeroCrypt 🔐 (v1.02)</h1>
+            
+            <p class="highlight-credit">
+                Designed by MOHAMMED REHAN | @zfln-rehan0520
+            </p>
+            
+            <label>Master Security Key</label>
+            <input type="password" id="m-pass" placeholder="••••••••">
+            
+            <div class="options-grid">
+                <label class="option-item"><input type="checkbox" id="c-u" checked> Uppercase</label>
+                <label class="option-item"><input type="checkbox" id="c-l" checked> Lowercase</label>
+                <label class="option-item"><input type="checkbox" id="c-n" checked> Numbers</label>
+                <label class="option-item"><input type="checkbox" id="c-s" checked> Symbols</label>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                <span style="font-size:0.8rem; opacity:0.6;">Length:</span>
+                <input type="number" id="p-len" value="16" min="6" max="64" style="margin:0; width: 80px;">
+            </div>
 
-        <label>Service Name</label>
-        <input type="text" id="l-in" placeholder="e.g. GitHub">
-        
-        <button onclick="UI.handleSave()">Generate & Save</button>
-        
-        <div id="v-list"></div>
-        
-        <div style="display: flex; gap: 10px; margin-top: 30px;">
-            <button onclick="UI.export()" class="btn-white">Backup (.json)</button>
-            <button onclick="document.getElementById('file-input').click()" class="btn-white">Restore (.json)</button>
-        </div>
-        <input type="file" id="file-input" class="hidden" accept=".json" onchange="UI.handleImport(event)">
-        
-        <p class="highlight-warning">
-            Note: Losing your Master Key means losing access to your data forever.
-        </p>
-    `;
-    this.refresh();
-},
+            <label>Service Name</label>
+            <input type="text" id="l-in" placeholder="e.g. GitHub">
+            
+            <button onclick="UI.handleSave()">Generate & Save</button>
+            
+            <div id="v-list"></div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button onclick="UI.export()" class="btn-white">Backup (.json)</button>
+                <button onclick="document.getElementById('file-input').click()" class="btn-white">Restore (.json)</button>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept=".json" onchange="UI.handleImport(event)">
+            
+            <p class="highlight-warning">
+                Note: Losing your Master Key means losing access to your data forever.
+            </p>
+        `;
+        this.refresh();
+    },
 
     async handleSave() {
         const m = document.getElementById('m-pass').value;
@@ -80,12 +80,16 @@ const UI = {
         const list = document.getElementById('v-list');
         const data = VaultStorage.get();
         list.innerHTML = '<h3 style="font-size:0.7rem; margin-top:25px; opacity:0.5; text-align:center;">VAULT ENTRIES</h3>';
+        
         data.forEach(item => {
             const div = document.createElement('div');
             div.className = 'vault-card';
+            
+            // We use event.stopPropagation() on the delete click to prevent 
+            // the whole card from reacting when you click the X.
             div.innerHTML = `
                 <span class="entry-label">${item.label}</span>
-                <button class="delete-btn" onclick="UI.del('${item.id}')">✕</button>
+                <button class="delete-btn" onclick="UI.del(event, '${item.id}')">✕</button>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <button onclick="UI.reveal('${item.id}')" style="width:auto; padding:6px 12px; margin:0; font-size:0.7rem;">Reveal</button>
                     <span id="p-${item.id}" style="color:var(--accent); font-weight:bold; font-family:monospace;"></span>
@@ -105,7 +109,10 @@ const UI = {
         setTimeout(() => { span.innerText = ''; }, 5000);
     },
 
-    del(id) {
+    del(event, id) {
+        // Prevents the click from bubbling up to the parent card
+        event.stopPropagation(); 
+        
         if(confirm("Delete permanently?")) {
             VaultStorage.delete(id);
             this.refresh();
