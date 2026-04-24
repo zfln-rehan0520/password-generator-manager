@@ -147,35 +147,33 @@ button:hover {
 
 .hidden { display: none; }
 .entry-label { font-weight: bold; color: #fff; display: block; margin-bottom: 10px; }
-/* 1. Highlight the Credit Line */
+
 .highlight-credit {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--accent); /* This will be your Dark Orange */
+    color: var(--accent);
     font-weight: bold;
     letter-spacing: 1px;
     margin-bottom: 20px;
     padding: 5px;
-    border: 1px solid rgba(255, 140, 0, 0.2); /* Subtle orange border */
+    border: 1px solid rgba(255, 140, 0, 0.2); 
     border-radius: 4px;
 }
 
-/* 2. Highlight the Warning Note */
 .highlight-warning {
     font-size: 0.65rem;
     text-align: center;
     color: #fff;
-    background: rgba(255, 140, 0, 0.1); /* Very faint orange glow */
+    background: rgba(255, 140, 0, 0.1); 
     padding: 10px;
     border-radius: 6px;
     margin-top: 20px;
-    border-left: 3px solid var(--accent); /* Orange bar on the left */
+    border-left: 3px solid var(--accent); 
 }
 
-/* 3. Style the Backup/Restore buttons in White */
 .btn-white {
-    background: #ffffff !important; /* Pure White */
-    color: #000000 !important;    /* Black text for contrast */
+    background: #ffffff !important; 
+    color: #000000 !important;    
     border: none !important;
     font-size: 0.7rem !important;
     font-weight: bold !important;
@@ -186,14 +184,22 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* 4. Update the X button to Cyan as requested */
 .delete-btn {
     position: absolute;
     top: 12px;
     right: 12px;
-    color: #00ffff !important; /* Cyan */
+    color: #00ffff !important; 
     cursor: pointer;
     background: none;
     border: none;
     font-size: 1rem;
 }
+
+/* --- THE FIX START --- */
+/* This prevents the neon green block from appearing on the X button */
+.delete-btn:hover {
+    background: transparent !important;
+    color: #ff4d4d !important; /* Optional: Changes X to red on hover for clarity */
+    transform: scale(1.1);
+}
+/* --- THE FIX END --- */
